@@ -2,14 +2,14 @@ import numpy as np
 from flask import Flask, request, jsonify, render_template
 import pickle
 
-app = Flask(__name__, template_folder='template')
+main = Flask(__name__, template_folder='template')
 model = pickle.load(open('model.pkl', 'rb'))
 
-@app.route('/')
+@main.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/predict',methods=['POST'])
+@main.route('/predict',methods=['POST'])
 def predict():
     '''
     For rendering results on HTML GUI
@@ -22,16 +22,7 @@ def predict():
 
     return render_template('index.html', prediction_text='Employee Salary should be $ {}'.format(output))
 
-@app.route('/predict_api',methods=['POST'])
-def predict_api():
-    '''
-    For direct API calls trought request
-    '''
-    data = request.get_json(force=True)
-    prediction = model.predict([np.array(list(data.values()))])
-
-    output = prediction[0]
-    return jsonify(output)
+@main.route('/predict_api',methods=['POST'])
 
 if __name__ == "__main__":
     app.run(debug=True)
